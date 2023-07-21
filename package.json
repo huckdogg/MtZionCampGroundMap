@@ -31,5 +31,7 @@
     "vite": "^3.2.5"
   },
   "private": true,
-  "dependencies": {}
+  "dependencies": {
+    "@types/geojson": "^7946.0.10"
+  }
 }
