@@ -15,6 +15,7 @@ const CAMP_GROUND_BOUNDS = {
   };
 
 var mapGlobal;
+var infoWindow;
 
 const mapPointArray:google.maps.Data.Feature[] = []
 const mapPolygonArray:google.maps.Data.Feature[] = []
@@ -125,7 +126,7 @@ async function initMap() {
             const markerBG = new google.maps.Marker ({
                 map,
                 position: pntLatLng,
-                //content: pinElement.element,
+                title: feature.getProperty("name"),
                 icon: {
                     url: "node_modules/images/glyphs/Google_Maps_pin.png",
                     scaledSize: new google.maps.Size(30,50),
@@ -133,17 +134,35 @@ async function initMap() {
                 }
             })              
 
+            var shape = {
+                coords: [0,0, 1000,1000],
+                type: 'rect'
+            };
             const markerIcon = new google.maps.Marker ({
                 map,
                 position: pntLatLng,
                 title: feature.getProperty("name"),
-                //content: pinElement.element,
+                shape: shape,
                 icon: {
                     url: currImg,
                     scaledSize: new google.maps.Size(20,20),
                     anchor: new google.maps.Point(9.5,45)
                 }
             })  
+
+            markerIcon.addListener("click", () => {
+                if (infoWindow) {
+                    infoWindow.close();
+                }
+                infoWindow = new google.maps.InfoWindow({
+                    content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", //contentString,
+                    ariaLabel: "Uluru",
+                  });            
+                infoWindow.open({
+                  anchor: markerIcon,
+                  map,
+                });
+              });
 
             currImg = null;
             map.data.overrideStyle(feature, {visible: false});
