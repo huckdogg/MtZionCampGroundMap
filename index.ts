@@ -16,41 +16,38 @@ const CAMP_GROUND_BOUNDS = {
 
 var mapGlobal;
 var infoWindow;
+var boundsHidden: boolean = false;
+var markersHidden: boolean = false;
 
-const mapPointArray:google.maps.Marker[] = []
-const mapPolygonArray:google.maps.Polygon[] = []
+const mapMarkerArray:google.maps.Marker[] = [];
+const mapAdvMarkerArray:google.maps.marker.AdvancedMarkerElement[] = [];
+const mapPolygonArray:google.maps.Polygon[] = [];
 
 async function initMap() {
-  const { Map, InfoWindow } = await google.maps.importLibrary("maps") as google.maps.MapsLibrary;
-  const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker") as google.maps.MarkerLibrary;
-  //const {Symbol, SymbolPath} = await google.maps.importLibrary("core");
+    const { Map, InfoWindow } = await google.maps.importLibrary("maps") as google.maps.MapsLibrary;
+    const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker") as google.maps.MarkerLibrary;
+    //const {Symbol, SymbolPath} = await google.maps.importLibrary("core");
 
-  const map = new google.maps.Map(
-    document.getElementById("map") as HTMLElement,
-    {
-      zoom: 18.5,
-      center: { lat: 33.247843666385506, lng: -84.3891508463981 },
-      restriction: {
-        latLngBounds: CAMP_GROUND_BOUNDS,
-        strictBounds: false,
-      },
-      mapId: "a1ba09bec1919684",
-    }
-  );
+    const map = new google.maps.Map(
+        document.getElementById("map") as HTMLElement,
+        {
+        zoom: 18.5,
+        center: { lat: 33.247843666385506, lng: -84.3891508463981 },
+        restriction: {
+            latLngBounds: CAMP_GROUND_BOUNDS,
+            strictBounds: false,
+        },
+        mapId: "a1ba09bec1919684",
+        }
+    );
 
-  // add event listener for click event
-  document
-    .getElementById("restore-bounds-overlay")!
-    .addEventListener("click", restoreBoundsOverlay);
-  document
-    .getElementById("remove-bounds-overlay")!
-    .addEventListener("click", removeBoundsOverlay);
-  document
-    .getElementById("restore-bounds-overlay")!
-    .addEventListener("click", restorePointsOverlay);
-  document
-    .getElementById("remove-bounds-overlay")!
-    .addEventListener("click", removePointsOverlay);
+    // add event listener for click event
+    document
+        .getElementById("toggle-bounds-overlay")!
+        .addEventListener("click", toggleBoundsOverlay);
+    document
+        .getElementById("toggle-marker-overlay")!
+        .addEventListener("click", toggleMarkerOverlay);
 
     const tentImg = 'node_modules/images/glyphs/camping_FILL0_wght400_GRAD0_opsz48.png';
     const churchImg = 'node_modules/images/glyphs/church_FILL0_wght500_GRAD0_opsz48.png';
@@ -115,7 +112,9 @@ async function initMap() {
                         scaledSize: new google.maps.Size(30,50),
                         anchor: new google.maps.Point(15,49)               
                     }
-                })              
+                }); 
+                
+                mapMarkerArray.push(markerBG);
 
                 var shape = {
                     coords: [0,0, 1000,1000],
@@ -126,7 +125,9 @@ async function initMap() {
                 switch(feature.getProperty("marker-symbol")) {
                     case "campsite": {
                         var tentNumber = +feature.getId();
-                        
+                        if (isNaN(+tentNumber)) {
+                            tentNumber = 0;
+                        }
                         const pin = new PinElement({
                             glyph: tentNumber.toString(),
                             scale: 1.3,
@@ -138,9 +139,13 @@ async function initMap() {
                             position: pntLatLng,
                             map: map,
                             title: feature.getProperty("name"),
-                            zIndex: tentNumber,
+                            zIndex: tentNumber * -1,
                             content: pin.element,
                         })
+
+                        markerBG.setZIndex(tentNumber * -1);
+
+                        mapAdvMarkerArray.push(markerIcon);
 
                         break;
                     }
@@ -158,6 +163,9 @@ async function initMap() {
                                 labelOrigin: new google.maps.Point(10,55),
                             }
                         });
+                        markerIcon.setZIndex(1);
+                        markerBG.setZIndex(1);
+                        mapMarkerArray.push(markerIcon);
                         break;
                     }
                     case "religious-christian": {
@@ -174,6 +182,9 @@ async function initMap() {
                                 labelOrigin: new google.maps.Point(10,55),
                             }
                         });
+                        markerIcon.setZIndex(2);
+                        markerBG.setZIndex(2);
+                        mapMarkerArray.push(markerIcon);
                         break;
                     }    
                     case "parking": {
@@ -190,6 +201,9 @@ async function initMap() {
                                 labelOrigin: new google.maps.Point(10,55),
                             }
                         });
+                        markerIcon.setZIndex(3);
+                        markerBG.setZIndex(3);
+                        mapMarkerArray.push(markerIcon);
                         break;
                     }    
                     case "restaurant": {
@@ -206,6 +220,9 @@ async function initMap() {
                                 labelOrigin: new google.maps.Point(10,55),
                             }
                         });
+                        markerIcon.setZIndex(4);
+                        markerBG.setZIndex(4);
+                        mapMarkerArray.push(markerIcon);
                         break;
                     }      
                     case "cemetery": {
@@ -222,6 +239,9 @@ async function initMap() {
                                 labelOrigin: new google.maps.Point(10,55),
                             }
                         });
+                        markerIcon.setZIndex(5);
+                        markerBG.setZIndex(5);
+                        mapMarkerArray.push(markerIcon);
                         break;
                     }
                     case "picnic-site": {
@@ -238,6 +258,9 @@ async function initMap() {
                                 labelOrigin: new google.maps.Point(10,55),
                             }
                         });
+                        markerIcon.setZIndex(6);
+                        markerBG.setZIndex(6);
+                        mapMarkerArray.push(markerIcon);
                         break;
                     }
                     case "water": {
@@ -254,6 +277,9 @@ async function initMap() {
                                 labelOrigin: new google.maps.Point(10,55),
                             }
                         });
+                        markerIcon.setZIndex(7);
+                        markerBG.setZIndex(7);
+                        mapMarkerArray.push(markerIcon);
                         break;
                     }
                     case "playground": {
@@ -270,6 +296,9 @@ async function initMap() {
                                 labelOrigin: new google.maps.Point(10,55),
                             }
                         });
+                        markerIcon.setZIndex(8);
+                        markerBG.setZIndex(8);
+                        mapMarkerArray.push(markerIcon);
                         break;
                     }
                     case "home": {
@@ -286,6 +315,9 @@ async function initMap() {
                                 labelOrigin: new google.maps.Point(10,55),
                             }
                         });
+                        markerIcon.setZIndex(9);
+                        markerBG.setZIndex(9);
+                        mapMarkerArray.push(markerIcon);
                         break;
                     }
                     case "hardware": {
@@ -302,6 +334,9 @@ async function initMap() {
                                 labelOrigin: new google.maps.Point(10,55),
                             }
                         });
+                        markerIcon.setZIndex(10);
+                        markerBG.setZIndex(10);
+                        mapMarkerArray.push(markerIcon);
                         break;
                     }                
                     default: {
@@ -322,9 +357,6 @@ async function initMap() {
                         openInfoWindow(feature, markerBG, map);
                     });
                 }
-                
-                mapPointArray.push(markerBG);
-                mapPointArray.push(markerIcon);
 
                 currIcon = null;
                 map.data.overrideStyle(feature, {visible: false});
@@ -344,7 +376,7 @@ function openInfoWindow(feature: google.maps.Data.Feature, marker, map) {
     }
     
     infoWindow = new google.maps.InfoWindow({
-        content: feature.getId() + '<h1>' + feature.getProperty('name') + '</h1> <h3>' + feature.getProperty('year-built') + '</h3> <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p> <img src="https://nationaltoday.com/wp-content/uploads/2022/06/22-Log-Cabin.jpg.webp" width="300" height="300">', //contentString,
+        content: '<h1>' + feature.getProperty('name') + '</h1><h2>Tent Number: ' + feature.getId() + '</h2> <h3>' + feature.getProperty('year-built') + '</h3> <p>' + feature.getProperty("description") + '</p> <img src="https://nationaltoday.com/wp-content/uploads/2022/06/22-Log-Cabin.jpg.webp" width="300" height="300">', //contentString,
         ariaLabel: "Uluru",
     });
         
@@ -354,28 +386,40 @@ function openInfoWindow(feature: google.maps.Data.Feature, marker, map) {
     });
 }
 
-function restoreBoundsOverlay() {
-    mapPolygonArray.forEach(feature => {
-        feature.setVisible(true);
-    });
+function toggleBoundsOverlay() {
+    if (boundsHidden) {
+        mapPolygonArray.forEach(feature => {
+            feature.setVisible(true);
+        });
+        boundsHidden = false;
+    }
+    else {
+        mapPolygonArray.forEach(feature => {
+            feature.setVisible(false);
+        });
+        boundsHidden = true;
+    }
 }
 
-function removeBoundsOverlay() {
-    mapPolygonArray.forEach(feature => {
-        feature.setVisible(false);
-    });
-}
-
-function restorePointsOverlay() {
-    mapPointArray.forEach(feature => {
-        feature.setVisible(true);
-    });
-}
-
-function removePointsOverlay() {
-    mapPointArray.forEach(feature => {
-        feature.setVisible(false);
-    });
+function toggleMarkerOverlay() {
+    if (markersHidden) {
+        mapMarkerArray.forEach(feature => {
+            feature.setVisible(true);
+        });
+        mapAdvMarkerArray.forEach(feature => {
+            feature.hidden = false;
+        })
+        markersHidden = false;
+    }
+    else {
+        mapMarkerArray.forEach(feature => {
+            feature.setVisible(false);
+        });
+        mapAdvMarkerArray.forEach(feature => {
+            feature.hidden = true;
+        })
+        markersHidden = true;
+    }
 }
 
 declare global {
