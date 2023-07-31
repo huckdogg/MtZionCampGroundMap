@@ -5,7 +5,7 @@
   "license": "Apache-2.0",
   "main": "index.ts",
   "scripts": {
-    "start": "node index.ts"
+    "start": "/index.ts"
   },
   "author": "Brian Huckaby",
   "devDependencies": {
