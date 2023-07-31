@@ -1,9 +1,7 @@
 dist/*.js
 dist/samples/*/iframe/assets
 test-results
-**/node_modules
 samples/**/package-lock.json
-**/.npmrc
 /index.html
 bazel-*
 .bazelrc.user
@@ -53,7 +51,6 @@ bower_components
 build/Release
 
 # Dependency directories
-node_modules/
 jspm_packages/
 
 # TypeScript v1 declaration files
