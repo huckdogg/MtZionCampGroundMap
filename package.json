@@ -5,11 +5,7 @@
   "license": "Apache-2.0",
   "main": "index.ts",
   "scripts": {
-    "dev": "vite",
-    "start": "vite",
-    "build": "vite build --outDir dist --base './'",
-    "test": "tsc --no-emit",
-    "preview": "vite preview"
+    "start": "vite"
   },
   "author": "Brian Huckaby",
   "devDependencies": {
