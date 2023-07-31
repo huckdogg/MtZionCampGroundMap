@@ -49,11 +49,11 @@ async function initMap() {
         .getElementById("toggle-marker-overlay")!
         .addEventListener("click", () => {toggleMarkerOverlay(map)});
 
-    const tentImg = 'data/images/glyphs/camping_FILL0_wght400_GRAD0_opsz48.png';
-    const churchImg = 'data/images/glyphs/church_FILL0_wght500_GRAD0_opsz48.png';
-    const hotelImg = 'data/images/glyphs/hotel_FILL0_wght500_GRAD0_opsz48.png';
+    const tentImg = '/data/images/glyphs/camping_FILL0_wght400_GRAD0_opsz48.png';
+    const churchImg = '/data/images/glyphs/church_FILL0_wght500_GRAD0_opsz48.png';
+    const hotelImg = '/data/images/glyphs/hotel_FILL0_wght500_GRAD0_opsz48.png';
 
-    map.data.loadGeoJson("data/map.geojson", { idPropertyName: 'id' }, function(features) {
+    map.data.loadGeoJson("/data/map.geojson", { idPropertyName: 'id' }, function(features) {
         map.data.forEach(feature => {        
             if (feature.getGeometry()?.getType() == "Polygon")
             {
@@ -108,7 +108,7 @@ async function initMap() {
                     position: pntLatLng,
                     title: feature.getProperty("name"),
                     icon: {
-                        url: "data/images/glyphs/Google_Maps_pin.png",
+                        url: "/data/images/glyphs/Google_Maps_pin.png",
                         scaledSize: new google.maps.Size(30,50),
                         anchor: new google.maps.Point(15,49)               
                     }
