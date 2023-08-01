@@ -150,7 +150,7 @@ async function initMap() {
                         });
 
                         markerIcon = new AdvancedMarkerElement({
-                            position: pntLatLng,
+                            position: { lat: pntLatLng.lat, lng: pntLatLng.lng, altitude: 20 } as google.maps.LatLngAltitudeLiteral,
                             map: map,
                             title: feature.getProperty("name"),
                             zIndex: tentNumber * -1,
