@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2019 Google LLC. All Rights Reserved.
+ * Copyright 2023 Brian Huckaby All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -8,11 +8,25 @@ import type { FeatureCollection, Feature, Polygon } from "geojson";
 
 //Define map panning boundary
 const CAMP_GROUND_BOUNDS = {
-    north: 33.24999133556339,
-    south: 33.24455143691366,
-    west: -84.39354171266014,
-    east: -84.38413147273877,
+    north: 33.28617547986973, 
+    south: 33.2227561612825, 
+    west: -84.41972040672398,
+    east: -84.24538406049818,
   };
+
+const geoJSONFile = '/data/map.geojson';
+const pinMarkerBG = '/data/images/glyphs/Google_Maps_pin.png';
+const tentImg = '/data/images/glyphs/camping_FILL0_wght400_GRAD0_opsz48.png';
+const churchImg = '/data/images/glyphs/church_FILL0_wght500_GRAD0_opsz48.png';
+const hotelImg = '/data/images/glyphs/hotel_FILL0_wght500_GRAD0_opsz48.png';
+const parkingImg = 'data/images/glyphs/local_parking_FILL0_wght500_GRAD0_opsz48.png';
+const diningHallImg = 'data/images/glyphs/restaurant_FILL0_wght500_GRAD0_opsz48.png';
+const cemeteryImg = 'data/images/glyphs/cemetery_FILL0_wght500_GRAD0_opsz48.png';
+const rvParkImg = 'data/images/glyphs/rv_hookup_FILL0_wght400_GRAD0_opsz48.png';
+const springImg = 'data/images/glyphs/water_drop_FILL0_wght500_GRAD0_opsz48.png';
+const playgroundImg = 'data/images/glyphs/seesaw_FILL0_wght400_GRAD0_opsz48.png';
+const houseImg = 'data/images/glyphs/cottage_FILL0_wght400_GRAD0_opsz48.png';
+const shedImg = 'data/images/glyphs/handyman_FILL0_wght500_GRAD0_opsz48.png';
 
 var mapGlobal;
 var infoWindow;
@@ -49,11 +63,11 @@ async function initMap() {
         .getElementById("toggle-marker-overlay")!
         .addEventListener("click", () => {toggleMarkerOverlay(map)});
 
-    const tentImg = '/data/images/glyphs/camping_FILL0_wght400_GRAD0_opsz48.png';
-    const churchImg = '/data/images/glyphs/church_FILL0_wght500_GRAD0_opsz48.png';
-    const hotelImg = '/data/images/glyphs/hotel_FILL0_wght500_GRAD0_opsz48.png';
+    // const tentImg = '/data/images/glyphs/camping_FILL0_wght400_GRAD0_opsz48.png';
+    // const churchImg = '/data/images/glyphs/church_FILL0_wght500_GRAD0_opsz48.png';
+    // const hotelImg = '/data/images/glyphs/hotel_FILL0_wght500_GRAD0_opsz48.png';
 
-    map.data.loadGeoJson("/data/map.geojson", { idPropertyName: 'id' }, function(features) {
+    map.data.loadGeoJson(geoJSONFile, { idPropertyName: 'id' }, function(features) {
         map.data.forEach(feature => {        
             if (feature.getGeometry()?.getType() == "Polygon")
             {
@@ -108,7 +122,7 @@ async function initMap() {
                     position: pntLatLng,
                     title: feature.getProperty("name"),
                     icon: {
-                        url: "/data/images/glyphs/Google_Maps_pin.png",
+                        url: pinMarkerBG,
                         scaledSize: new google.maps.Size(30,50),
                         anchor: new google.maps.Point(15,49)               
                     }
@@ -157,7 +171,7 @@ async function initMap() {
                             label: feature.getProperty("name"),
                             shape: shape,
                             icon: {
-                                url: 'data/images/glyphs/hotel_FILL0_wght500_GRAD0_opsz48.png',
+                                url: hotelImg,
                                 scaledSize: new google.maps.Size(20,20),
                                 anchor: new google.maps.Point(9.5,45),
                                 labelOrigin: new google.maps.Point(10,55),
@@ -176,7 +190,7 @@ async function initMap() {
                             label: feature.getProperty("name"),
                             shape: shape,
                             icon: {
-                                url: 'data/images/glyphs/church_FILL0_wght500_GRAD0_opsz48.png',
+                                url: churchImg,
                                 scaledSize: new google.maps.Size(20,20),
                                 anchor: new google.maps.Point(9.5,45),
                                 labelOrigin: new google.maps.Point(10,55),
@@ -195,7 +209,7 @@ async function initMap() {
                             label: feature.getProperty("name"),
                             shape: shape,
                             icon: {
-                                url: 'data/images/glyphs/local_parking_FILL0_wght500_GRAD0_opsz48.png',
+                                url: parkingImg,
                                 scaledSize: new google.maps.Size(20,20),
                                 anchor: new google.maps.Point(9,42),
                                 labelOrigin: new google.maps.Point(10,55),
@@ -214,7 +228,7 @@ async function initMap() {
                             label: feature.getProperty("name"),
                             shape: shape,
                             icon: {
-                                url: 'data/images/glyphs/restaurant_FILL0_wght500_GRAD0_opsz48.png',
+                                url: diningHallImg,
                                 scaledSize: new google.maps.Size(20,20),
                                 anchor: new google.maps.Point(9.5,42),
                                 labelOrigin: new google.maps.Point(10,55),
@@ -233,7 +247,7 @@ async function initMap() {
                             label: feature.getProperty("name"),
                             shape: shape,
                             icon: {
-                                url: 'data/images/glyphs/cemetery_FILL0_wght500_GRAD0_opsz48.png',
+                                url: cemeteryImg,
                                 scaledSize: new google.maps.Size(20,20),
                                 anchor: new google.maps.Point(9.5,45),
                                 labelOrigin: new google.maps.Point(10,55),
@@ -252,7 +266,7 @@ async function initMap() {
                             label: feature.getProperty("name"),
                             shape: shape,
                             icon: {
-                                url: 'data/images/glyphs/rv_hookup_FILL0_wght400_GRAD0_opsz48.png',
+                                url: rvParkImg,
                                 scaledSize: new google.maps.Size(20,20),
                                 anchor: new google.maps.Point(9.5,45),
                                 labelOrigin: new google.maps.Point(10,55),
@@ -271,7 +285,7 @@ async function initMap() {
                             label: feature.getProperty("name"),
                             shape: shape,
                             icon: {
-                                url: 'data/images/glyphs/water_drop_FILL0_wght500_GRAD0_opsz48.png',
+                                url: springImg,
                                 scaledSize: new google.maps.Size(20,20),
                                 anchor: new google.maps.Point(9.5,45),
                                 labelOrigin: new google.maps.Point(10,55),
@@ -290,7 +304,7 @@ async function initMap() {
                             label: feature.getProperty("name"),
                             shape: shape,
                             icon: {
-                                url: 'data/images/glyphs/seesaw_FILL0_wght400_GRAD0_opsz48.png',
+                                url: playgroundImg,
                                 scaledSize: new google.maps.Size(20,20),
                                 anchor: new google.maps.Point(9.5,45),
                                 labelOrigin: new google.maps.Point(10,55),
@@ -309,7 +323,7 @@ async function initMap() {
                             label: feature.getProperty("name"),
                             shape: shape,
                             icon: {
-                                url: 'data/images/glyphs/cottage_FILL0_wght400_GRAD0_opsz48.png',
+                                url: houseImg,
                                 scaledSize: new google.maps.Size(20,20),
                                 anchor: new google.maps.Point(9.5,45),
                                 labelOrigin: new google.maps.Point(10,55),
@@ -328,7 +342,7 @@ async function initMap() {
                             label: feature.getProperty("name"),
                             shape: shape,
                             icon: {
-                                url: 'data/images/glyphs/handyman_FILL0_wght500_GRAD0_opsz48.png',
+                                url: shedImg,
                                 scaledSize: new google.maps.Size(20,20),
                                 anchor: new google.maps.Point(9.5,45),
                                 labelOrigin: new google.maps.Point(10,55),
