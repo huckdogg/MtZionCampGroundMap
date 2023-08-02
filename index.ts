@@ -110,13 +110,17 @@ async function initMap() {
             }
             else if (feature.getGeometry()?.getType() == "Point")
             {
-                var pntLatLng;
-                var currIcon;
+                var pntLatLngArray:google.maps.LatLng[] = [];
+                var pntLatLng: google.maps.LatLng;
+                var currLatLng = 0;
 
                 feature.getGeometry()?.forEachLatLng(latLng => {
-                    pntLatLng = latLng;
+                    pntLatLngArray[currLatLng] = latLng;
+                    currLatLng++;
                 })
 
+                pntLatLng = currLatLng[0];
+                
                 const markerBG = new google.maps.Marker ({
                     map,
                     position: pntLatLng,
@@ -150,7 +154,7 @@ async function initMap() {
                         });
 
                         markerIcon = new AdvancedMarkerElement({
-                            position: { lat: pntLatLng.lat, lng: pntLatLng.lng, altitude: 20 } as google.maps.LatLngAltitudeLiteral,
+                            position:  { lat: pntLatLng.lat, lng: pntLatLng.lng, altitude: 20 } as google.maps.LatLngAltitudeLiteral,
                             map: map,
                             title: feature.getProperty("name"),
                             zIndex: tentNumber * -1,
