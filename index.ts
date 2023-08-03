@@ -33,6 +33,12 @@ var infoWindow;
 var boundsHidden: boolean = false;
 var markersHidden: boolean = false;
 
+const tentMarkerToggleZoomLevel = 18.3;
+const poiMarkerToggleZoomLevel = 17.5;
+const poiMarkerClusterToggleZoomLevel = 17.5;
+const campGroundMarkerToggleZoomLevel = 25;
+const campGroundBoundsToggleZoomLevel = 25;
+
 const mapMarkerArray:google.maps.Marker[] = [];
 const mapAdvMarkerArray:google.maps.marker.AdvancedMarkerElement[] = [];
 const mapPolygonArray:google.maps.Polygon[] = [];
@@ -62,6 +68,37 @@ async function initMap() {
     document
         .getElementById("toggle-marker-overlay")!
         .addEventListener("click", () => {toggleMarkerOverlay(map)});
+
+    // event listener for zoom level changes
+    /* Change markers on zoom */
+    google.maps.event.addListener(map, 'zoom_changed', function() {
+        var zoom = map.getZoom();
+        (document.getElementById("debug-text")).textContent = zoom.toString();
+        if (isNaN(+zoom)) {
+            zoom = 0;
+        }
+
+        if (zoom > tentMarkerToggleZoomLevel && !markersHidden) {
+            setAdvancedMarkerVisible(map);
+        }
+        else if (zoom <= tentMarkerToggleZoomLevel && !markersHidden) {
+            setAdvancedMarkerVisible(null);
+        }
+
+        if (zoom > poiMarkerClusterToggleZoomLevel && !markersHidden) {
+            setMarkerVisible(true);
+        }
+        else if (zoom <= poiMarkerClusterToggleZoomLevel && !markersHidden) {
+            setMarkerVisible(false);
+        }
+
+        if (zoom > poiMarkerToggleZoomLevel && !markersHidden) {
+            setMarkerVisible(true);
+        }
+        else if (zoom <= poiMarkerToggleZoomLevel && !markersHidden) {
+            setMarkerVisible(false);
+        }
+    });
 
     // const tentImg = '/data/images/glyphs/camping_FILL0_wght400_GRAD0_opsz48.png';
     // const churchImg = '/data/images/glyphs/church_FILL0_wght500_GRAD0_opsz48.png';
@@ -119,7 +156,7 @@ async function initMap() {
                     currLatLng++;
                 })
 
-                pntLatLng = currLatLng[0];
+                pntLatLng = pntLatLngArray[0];
                 
                 const markerBG = new google.maps.Marker ({
                     map,
@@ -131,8 +168,6 @@ async function initMap() {
                         anchor: new google.maps.Point(15,49)               
                     }
                 }); 
-                
-                mapMarkerArray.push(markerBG);
 
                 var shape = {
                     coords: [0,0, 1000,1000],
@@ -154,13 +189,14 @@ async function initMap() {
                         });
 
                         markerIcon = new AdvancedMarkerElement({
-                            position:  { lat: pntLatLng.lat, lng: pntLatLng.lng, altitude: 20 } as google.maps.LatLngAltitudeLiteral,
+                            position:  pntLatLng,
                             map: map,
-                            title: feature.getProperty("name"),
+                            title: "Tent - " + feature.getProperty("name"),
                             zIndex: tentNumber * -1,
                             content: pin.element,
                         })
 
+                        markerBG.setTitle("Tent - " + feature.getProperty("name"));
                         markerBG.setZIndex(tentNumber * -1);
 
                         mapAdvMarkerArray.push(markerIcon);
@@ -362,6 +398,7 @@ async function initMap() {
                         break;                    
                     }
                 }
+                mapMarkerArray.push(markerBG);
                 
                 if (markerIcon) {
                     markerIcon.addListener("click", () => {
@@ -376,7 +413,7 @@ async function initMap() {
                     });
                 }
 
-                currIcon = null;
+                //currIcon = null;
                 map.data.overrideStyle(feature, {visible: false});
             };
         });
@@ -421,25 +458,51 @@ function toggleBoundsOverlay() {
 
 function toggleMarkerOverlay(map: google.maps.Map) {
     if (markersHidden) {
-        mapMarkerArray.forEach(feature => {
-            feature.setVisible(true);
-        });
-        mapAdvMarkerArray.forEach(feature => {
-            feature.hidden = false;
-            feature.map = map;
-        })
         markersHidden = false;
+        setMarkerVisible(true);
+        setAdvancedMarkerVisible(map);
     }
     else {
-        mapMarkerArray.forEach(feature => {
-            feature.setVisible(false);
-        });
-        mapAdvMarkerArray.forEach(feature => {
-            feature.hidden = true;
-            feature.map = null;
-        })
         markersHidden = true;
+        setMarkerVisible(false);
+        setAdvancedMarkerVisible(null);
     }
+}
+
+function setAdvancedMarkerVisible(map) {
+    mapAdvMarkerArray.forEach(feature => {
+        feature.map = map;
+    })
+    if (map) {
+        setTentMarkerVisible(true);
+    }
+    else {
+        setTentMarkerVisible(false);
+    }
+}
+
+function setTentMarkerVisible(setVisible: boolean) {
+    mapMarkerArray.forEach(feature => {
+        if (feature.getTitle()?.includes("Tent - ") ) {
+            feature.setVisible(setVisible);
+        }
+    })
+}
+
+function setMarkerVisible(setVisible: boolean) {
+    mapMarkerArray.forEach(feature => {
+        if (!feature.getTitle()?.includes("Tent - ") ) {
+            feature.setVisible(setVisible);
+        }
+    })
+}
+
+function setMarkerClusterVisible(setVisible: boolean) {
+    mapMarkerArray.forEach(feature => {
+        if (!feature.getTitle()?.includes("Tent - ") ) {
+            feature.setVisible(setVisible);
+        }
+    })
 }
 
 declare global {
