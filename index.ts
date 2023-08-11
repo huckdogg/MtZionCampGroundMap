@@ -72,11 +72,7 @@ async function initMap() {
     // event listener for zoom level changes
     /* Change markers on zoom */
     google.maps.event.addListener(map, 'zoom_changed', function() {
-        var zoom = map.getZoom();
-        (document.getElementById("debug-text")).textContent = zoom.toString();
-        if (isNaN(+zoom)) {
-            zoom = 0;
-        }
+        var zoom = getZoomLevel(map);
 
         if (zoom > tentMarkerToggleZoomLevel && !markersHidden) {
             setAdvancedMarkerVisible(map);
@@ -425,6 +421,15 @@ async function initMap() {
 
 };
 
+function getZoomLevel(map): number {
+    var zoom = map.getZoom();
+    (document.getElementById("debug-text")).textContent = zoom.toString();
+    if (isNaN(+zoom)) {
+        zoom = 0;
+    }
+    return zoom;
+}
+
 function openInfoWindow(feature: google.maps.Data.Feature, marker, map) {
     if (infoWindow) {
         infoWindow.close();
@@ -447,26 +452,37 @@ function toggleBoundsOverlay() {
             feature.setVisible(true);
         });
         boundsHidden = false;
+        (document.getElementById("toggle-bounds-overlay")).textContent = "Hide boundaries";
     }
     else {
         mapPolygonArray.forEach(feature => {
             feature.setVisible(false);
         });
         boundsHidden = true;
+        (document.getElementById("toggle-bounds-overlay")).textContent = "Show boundaries";
     }
 }
 
 function toggleMarkerOverlay(map: google.maps.Map) {
+    //Unhide all markers and glyphs
     if (markersHidden) {
         markersHidden = false;
-        setMarkerVisible(true);
-        setAdvancedMarkerVisible(map);
+        if (getZoomLevel(map) > tentMarkerToggleZoomLevel) {
+            setMarkerVisible(true);
+            setAdvancedMarkerVisible(map);
+        }
+        (document.getElementById("toggle-marker-overlay")).textContent = "Hide map pins";
     }
+    //Hide all markers and glyphs
     else {
         markersHidden = true;
         setMarkerVisible(false);
         setAdvancedMarkerVisible(null);
+        (document.getElementById("toggle-marker-overlay")).textContent = "Show map pins";
     }
+
+    var markersHiddenString: string = String(markersHidden);
+    (document.getElementById("debug-text-2")).textContent = markersHiddenString;
 }
 
 function setAdvancedMarkerVisible(map) {
