@@ -466,7 +466,7 @@ async function initMap() {
 
 function getZoomLevel(map): number {
     var zoom = map.getZoom();
-    (document.getElementById("debug-text")).textContent = zoom.toString();
+    //(document.getElementById("debug-text")).textContent = zoom.toString();
     if (isNaN(+zoom)) {
         zoom = 0;
     }
@@ -539,7 +539,7 @@ function toggleMarkerOverlay(map: google.maps.Map) {
     }
 
     var markersHiddenString: string = String(markersHidden);
-    (document.getElementById("debug-text-2")).textContent = markersHiddenString;
+    //(document.getElementById("debug-text-2")).textContent = markersHiddenString;
 }
 
 function setAdvancedMarkerVisible(map) {
