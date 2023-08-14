@@ -1,17 +1,11 @@
-# Google Maps JavaScript Sample
+# Map of Mt. Zion United Methodist Camp Ground, Griffin, GA
 
-This sample is generated from @googlemaps/js-samples located at
-https://github.com/googlemaps/js-samples.
+Hosted at Vercel.com
+Built using Visual Studio Code on Windows 10
 
 ## Setup
 
 ```sh
 npm i
-npm start  # development
-npm run build  # production
+npm start -- --port=8080
 ```
-
-## Feedback
-
-For feedback related to this sample, please open a new issue on
-[GitHub](https://github.com/googlemaps/js-samples/issues).
