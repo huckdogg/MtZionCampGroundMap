@@ -40,6 +40,7 @@ const campGroundMarkerToggleZoomLevel = 25;
 const campGroundBoundsToggleZoomLevel = 25;
 
 const mapMarkerArray:google.maps.Marker[] = [];
+const zoomOutMapMarkerArray:google.maps.Marker[] = [];
 const mapAdvMarkerArray:google.maps.marker.AdvancedMarkerElement[] = [];
 const mapPolygonArray:google.maps.Polygon[] = [];
 
@@ -74,25 +75,38 @@ async function initMap() {
     google.maps.event.addListener(map, 'zoom_changed', function() {
         var zoom = getZoomLevel(map);
 
+        //If the zoom level is above the tent marker hiding threshold and the markers are not hidden from the button, display the tent glyphs
         if (zoom > tentMarkerToggleZoomLevel && !markersHidden) {
             setAdvancedMarkerVisible(map);
         }
+        //If the zoom level is below the tent marker hiding threshold and the markers are not already hidden from the button, hide the tent glyphs
         else if (zoom <= tentMarkerToggleZoomLevel && !markersHidden) {
             setAdvancedMarkerVisible(null);
         }
-
+        //If the zoom level is above the POI marker hiding threshold and the markers are not hidden from the button, display the POI markers
         if (zoom > poiMarkerClusterToggleZoomLevel && !markersHidden) {
             setMarkerVisible(true);
         }
+        //If the zoom level is below the POI marker hiding threshold and the markers are not already hidden from the button, hide the POI markers
         else if (zoom <= poiMarkerClusterToggleZoomLevel && !markersHidden) {
             setMarkerVisible(false);
         }
 
         if (zoom > poiMarkerToggleZoomLevel && !markersHidden) {
             setMarkerVisible(true);
+            zoomOutMapMarkerArray.forEach(feature => {
+                if (!feature.getTitle()?.includes("Tent - ") ) {
+                    feature.setVisible(false);
+                }
+            })
         }
         else if (zoom <= poiMarkerToggleZoomLevel && !markersHidden) {
             setMarkerVisible(false);
+            zoomOutMapMarkerArray.forEach(feature => {
+                if (!feature.getTitle()?.includes("Tent - ") ) {
+                    feature.setVisible(true);
+                }
+            })
         }
     });
 
@@ -164,6 +178,7 @@ async function initMap() {
                         anchor: new google.maps.Point(15,49)               
                     }
                 }); 
+                mapMarkerArray.push(markerBG);
 
                 var shape = {
                     coords: [0,0, 1000,1000],
@@ -196,6 +211,35 @@ async function initMap() {
                         markerBG.setZIndex(tentNumber * -1);
 
                         mapAdvMarkerArray.push(markerIcon);
+
+                        break;
+                    }
+                    case "historic": {
+                        markerIcon = new google.maps.Marker ({
+                            map,
+                            position: pntLatLng,
+                            title: feature.getProperty("name"),
+                            label: feature.getProperty("name"),
+                            shape: shape,
+                            icon: {
+                                url: churchImg,
+                                scaledSize: new google.maps.Size(20,20),
+                                anchor: new google.maps.Point(9.5,45),
+                                labelOrigin: new google.maps.Point(10,55),
+                            }
+                        });
+                        markerIcon.setZIndex(1);
+                        markerBG.setZIndex(1);
+                        //Remove the background marker from the general array and place it in the zoomed out marker array
+                        mapMarkerArray.pop();
+                        zoomOutMapMarkerArray.push(markerIcon);
+                        zoomOutMapMarkerArray.push(markerBG);
+
+                        zoomOutMapMarkerArray.forEach(feature => {
+                            if (!feature.getTitle()?.includes("Tent - ") ) {
+                                feature.setVisible(false);
+                            }
+                        })
 
                         break;
                     }
@@ -394,7 +438,6 @@ async function initMap() {
                         break;                    
                     }
                 }
-                mapMarkerArray.push(markerBG);
                 
                 if (markerIcon) {
                     markerIcon.addListener("click", () => {
@@ -471,6 +514,13 @@ function toggleMarkerOverlay(map: google.maps.Map) {
             setMarkerVisible(true);
             setAdvancedMarkerVisible(map);
         }
+        if (getZoomLevel(map) <= poiMarkerToggleZoomLevel) {
+            zoomOutMapMarkerArray.forEach(feature => {
+                if (!feature.getTitle()?.includes("Tent - ") ) {
+                    feature.setVisible(true);
+                }
+            })
+        }
         (document.getElementById("toggle-marker-overlay")).textContent = "Hide map pins";
     }
     //Hide all markers and glyphs
@@ -478,6 +528,13 @@ function toggleMarkerOverlay(map: google.maps.Map) {
         markersHidden = true;
         setMarkerVisible(false);
         setAdvancedMarkerVisible(null);
+        if (getZoomLevel(map) <= poiMarkerToggleZoomLevel) {
+            zoomOutMapMarkerArray.forEach(feature => {
+                if (!feature.getTitle()?.includes("Tent - ") ) {
+                    feature.setVisible(false);
+                }
+            })
+        }
         (document.getElementById("toggle-marker-overlay")).textContent = "Show map pins";
     }
 

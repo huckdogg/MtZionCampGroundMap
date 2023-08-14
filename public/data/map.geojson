@@ -266,6 +266,25 @@
 			"properties": {
 				"marker-color": "#ff0000",
 				"marker-size": "medium",
+				"marker-symbol": "historic",
+				"year-built": 1970,
+				"name": "Mt. Zion Methodist Camp Ground",
+				"id": 64,
+				"description": "Mt. Zion Methodist Camp Ground. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+			},
+			"geometry": {
+				"coordinates": [
+					-84.38934760122902,
+					33.24784597309254
+				],
+				"type": "Point"
+			}
+		},
+		{
+			"type": "Feature",
+			"properties": {
+				"marker-color": "#ff0000",
+				"marker-size": "medium",
 				"marker-symbol": "religious-christian",
 				"year-built": 1970,
 				"name": "Tabernacle",
