@@ -385,8 +385,8 @@ async function initMap() {
                             shape: shape,
                             icon: {
                                 url: playgroundImg,
-                                scaledSize: new google.maps.Size(20,20),
-                                anchor: new google.maps.Point(9.5,45),
+                                scaledSize: new google.maps.Size(29,29),
+                                anchor: new google.maps.Point(15,48),
                                 labelOrigin: new google.maps.Point(10,55),
                             }
                         });
